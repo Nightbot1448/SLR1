@@ -1,7 +1,5 @@
-.vs
-out
 grammar.a*
 grammar.f*
 grammar.l*
 grammar.s*
-CMakeSettings.json
+build

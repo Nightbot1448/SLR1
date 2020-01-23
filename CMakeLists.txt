@@ -5,18 +5,33 @@ cmake_minimum_required (VERSION 3.8)
 
 project ("SLR(1)")
 
-set(SRC "SLR1.cpp"
-		"SLR_parser.h"
-		"SLR_parser.cpp"
-		"Graph_of_states.h"
-		"Graph_of_states.cpp"
-		"Parsing_table.h"
-		"Parsing_table.cpp"
-		"SLR_base.h"
-		"SLR_base.cpp"
+set(CMAKE_CXX_STANDARD 17)
+
+set(SRC "src/SLR_parser.h"
+		"src/SLR_parser.cpp"
+		"src/Graph_of_states.h"
+		"src/Graph_of_states.cpp"
+		"src/Parsing_table.h"
+		"src/Parsing_table.cpp"
+		"src/SLR_base.h"
+		"src/SLR_base.cpp"
 		)
 
-# Add source to this project's executable.
-add_executable (SLR_parser ${SRC})
+include_directories(src)
 
-# TODO: Add tests and install targets if needed.
+add_library(SLR ${SRC})
+
+add_executable (SLR_parser src/SLR1.cpp)
+target_link_libraries(SLR_parser SLR)
+
+find_package(GTest)
+if (GTest_FOUND)
+	include_directories(${GTEST_INCLUDE_DIRS})
+
+	enable_testing()
+
+	add_executable(run_tests test/tests.cpp)
+	target_link_libraries(run_tests SLR gtest pthread)
+
+	add_test(run_tests run_tests)
+endif()

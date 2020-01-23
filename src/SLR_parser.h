@@ -16,7 +16,7 @@ class SLR1_parser {
 	void init_follow();
 	
 public:
-	SLR1_parser() = delete;
+	SLR1_parser(){}
 	SLR1_parser(const Grammar &grammar, bool print_table = false);
 
 	bool parse(std::string input);

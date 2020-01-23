@@ -9,7 +9,6 @@
 Graph_of_states::Graph_of_states(const Grammar& g) {
 	grammar = g;
 	compute_graph();
-	std::cout << "computed" << std::endl;
 }
 
 void Graph_of_states::closure(Items& state) {

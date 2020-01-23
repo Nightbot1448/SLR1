@@ -1,5 +1,6 @@
-#include "Parsing_table.h"
+#include <exception>
 
+#include "Parsing_table.h"
 
 Parsing_table::Parsing_table(const Grammar &g_, const Graph_of_states &graph, const FirstFollow_sets &follow) 
 	: grammar_(g_), graph_(graph), follow_(follow) {
@@ -58,7 +59,7 @@ void Parsing_table::fill_table() {
 							table_.at(i).at(follow_el) = Table_cell(TYPES::REDUCE, id);
 						}
 						else {
-							throw std::exception("conflict");
+							throw std::logic_error("conflict in cell(" + i + ',' + follow_el +')');
 						}
 					}
 				}
@@ -67,7 +68,7 @@ void Parsing_table::fill_table() {
 					table_.at(i).at('$') = Table_cell(TYPES::ACCEPT, 0);
 				}
 				else {
-					throw std::exception("accept/reduce fail");
+					throw std::logic_error("accept/reduce fail");
 				}
 			}
 		}
