@@ -1,7 +1,6 @@
 #ifndef PARSING_TABLE_H
 #define PARSING_TABLE_H
 
-//#include "SLR_base.h"
 #include "Graph_of_states.h"
 
 class Parsing_table {

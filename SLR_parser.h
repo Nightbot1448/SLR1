@@ -7,17 +7,20 @@
 class SLR1_parser {
 	FirstFollow_sets first;
 	FirstFollow_sets follow;
+	Grammar grammar;
 	Graph_of_states graph;
 	Parsing_table table;
 
 
 	void init_first();
 	void init_follow();
-	//void compute_graph();
-
+	
 public:
 	SLR1_parser() = delete;
-	SLR1_parser(const Grammar &grammar);
+	SLR1_parser(const Grammar &grammar, bool print_table = false);
+
+	bool parse(std::string input);
+	void print_parsing_table();
 };
 
-#endif // !SLR_PARSER_H 
+#endif // SLR_PARSER_H 

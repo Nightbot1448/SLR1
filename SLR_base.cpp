@@ -1,7 +1,5 @@
 #include "SLR_base.h"
 
-#include <iostream>
-
 Item::Item(char l, const std::string& bp, const std::string& ap) : left_part(l), before_point(bp), after_point(ap) {
 	static std::hash<char> hash_c;
 	static std::hash<std::string> hash_s;
@@ -35,6 +33,8 @@ State::State(const std::vector<Item> items) :items_(items) {
 		hash_ ^= items.at(i).hash_<< i;
 	}
 }
+
+Stack_elem::Stack_elem(char sy, size_t st) : symbol(sy), state(st) {}
 
 Table_cell::Table_cell() : type(TYPES::FAIL), id(0) {}
 

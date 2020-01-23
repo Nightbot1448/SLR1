@@ -9,7 +9,7 @@
 #include <functional>
 #include <algorithm>
 
-enum TYPES {
+enum struct TYPES {
 	ACCEPT,
 	SHIFT,
 	GOTO,
@@ -31,6 +31,13 @@ public:
 	std::vector<Item> items_;
 	size_t hash_;
 	State(const std::vector<Item>);
+};
+
+class Stack_elem {
+public:
+	char symbol;
+	size_t state;
+	explicit Stack_elem(char sy, size_t st);
 };
 
 class Table_cell {

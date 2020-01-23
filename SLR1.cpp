@@ -1,6 +1,8 @@
 ﻿#include "SLR_parser.h"
 #include "SLR_base.h"
 
+#include <iostream>
+
 int main()
 {
 	Grammar grammar;
@@ -17,6 +19,24 @@ int main()
 
 
 	SLR1_parser parser(grammar);
+	std::string in("n");
+	std::cout << parser.parse(in) << ' ' << in << std::endl;
+	in = "-n";
+	std::cout << parser.parse(in) << ' ' << in << std::endl;
+	in = "n+n";
+	std::cout << parser.parse(in) << ' ' << in << std::endl;
+	in = "-n+(n*n--n/n)+n";
+	std::cout << parser.parse(in) << ' ' << in << std::endl;
+	in = "n*-n";
+	std::cout << parser.parse(in) << ' ' << in << std::endl;
+	in = "n*/n";
+	std::cout << parser.parse(in) << ' ' << in << std::endl;
+	in = "n*(n";
+	std::cout << parser.parse(in) << ' ' << in << std::endl;
+	in = "n*-n)";
+	std::cout << parser.parse(in) << ' ' << in << std::endl;
+	in = "n*-nn";
+	std::cout << parser.parse(in) << ' ' << in << std::endl;
 
 	return 0;
 }
