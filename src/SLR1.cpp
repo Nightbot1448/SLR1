@@ -3,16 +3,16 @@
 
 #include <iostream>
 #include <fstream>
-//#include <getopt.h>
+#include <getopt.h>
 
 int main(int argc, char **argv)
 {
 	bool print_parsing_table = false;
 	bool print_tree = false;
 	std::string input_string("-n+(n*n--n/n)+n");
-	std::string input_file("input.txt");
+	std::string input_file;
 
-	/*const char* short_options = "pt::i:";
+	const char* short_options = "pt::if:";
 	int rez;
 	int option_index;
 
@@ -48,7 +48,7 @@ int main(int argc, char **argv)
 				break;
 			}
 		}
-	}*/
+	}
 	
 	Grammar grammar;
 	grammar.emplace('S', "E");
