@@ -52,7 +52,13 @@ int main(int argc, char **argv)
 	grammar.emplace('F', "n");
 
 
-	SLR1_parser parser(grammar, print_parsing_table);
+	SLR1_parser parser;
+	try{
+		parser = SLR1_parser(grammar, print_parsing_table);
+	}
+	catch(std::logic_error &e){
+		std::cout << e.what() << std::endl;
+	}
 	
 	std::cout 	<< "Input string: " << input_string << std::endl 
 				<< "Result : "<< (parser.parse(input_string) ? "accepted" : "reject") << std::endl;

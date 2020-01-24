@@ -58,7 +58,14 @@ bool SLR1_parser::parse(std::string input) {
 	st.push(Stack_elem('$', 0));
 	while (st.size()) {
 		Stack_elem current = st.top();
-		Table_cell action = table.table_.at(current.state).at(input.at(input_pointer));
+		Table_cell action;
+		try{
+			action = table.table_.at(current.state).at(input.at(input_pointer));
+		}
+		catch(std::out_of_range &e){
+			std::cout << "Symbol \'" << input.at(input_pointer) << "\' at position " << input_pointer << " isn't part of grammar" << std::endl;
+			return false;
+		}
 		if (action.type == TYPES::SHIFT) {
 			st.push(Stack_elem(input.at(input_pointer), action.id));
 			++input_pointer;
