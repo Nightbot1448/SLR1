@@ -49,6 +49,13 @@ public:
 	Table_cell(TYPES t, size_t id);
 };
 
+class TreeNode {
+public:
+	char symb;
+	std::vector<TreeNode> children;
+	TreeNode(char s, std::vector<TreeNode> ch = {});
+};
+
 bool operator==(Item f, Item s);
 bool operator!=(Item f, Item s);
 

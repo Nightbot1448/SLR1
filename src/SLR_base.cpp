@@ -39,3 +39,5 @@ Stack_elem::Stack_elem(char sy, size_t st) : symbol(sy), state(st) {}
 Table_cell::Table_cell() : type(TYPES::FAIL), id(0) {}
 
 Table_cell::Table_cell(TYPES t, size_t i) : type(t), id(i) {}
+
+TreeNode::TreeNode(char s, std::vector<TreeNode> ch) : symb(s), children(ch) {}

@@ -2,24 +2,27 @@
 #include "SLR_base.h"
 
 #include <iostream>
-#include <getopt.h>
+#include <fstream>
+//#include <getopt.h>
 
 int main(int argc, char **argv)
 {
-	const char* short_options = "p::i:";
+	bool print_parsing_table = false;
+	bool print_tree = false;
+	std::string input_string("-n+(n*n--n/n)+n");
+	std::string input_file("input.txt");
 
-	const struct option long_options[] = {
-		{"input",required_argument,NULL,'i'},
-		{"print_table",no_argument,NULL,'p'},
-		{NULL,0,NULL,0}
-	};
-
+	/*const char* short_options = "pt::i:";
 	int rez;
 	int option_index;
 
-	bool print_parsing_table = false;
-	std::string input_string("-n+(n*n--n/n)+n");
-	
+	const struct option long_options[] = {
+		{"input",required_argument,NULL,'i'},
+		{"file",required_argument,NULL,'f'},
+		{"tree",no_argument,NULL,'t'},
+		{"print_table",no_argument,NULL,'p'},
+		{NULL,0,NULL,0}
+	};
 	while ((rez=getopt_long(argc,argv,short_options,
 		long_options,&option_index))!=-1){
 
@@ -28,8 +31,16 @@ int main(int argc, char **argv)
 				print_parsing_table = true;
 				break;
 			}
+			case 't': {
+				print_tree = true;
+				break;
+			}
 			case 'i': {
 				input_string = optarg;
+				break;
+			}
+			case 'f': {
+				input_file = optarg;
 				break;
 			}
 			case '?': default: {
@@ -37,8 +48,8 @@ int main(int argc, char **argv)
 				break;
 			}
 		}
-	}
-
+	}*/
+	
 	Grammar grammar;
 	grammar.emplace('S', "E");
 	grammar.emplace('E', "T");
@@ -51,7 +62,6 @@ int main(int argc, char **argv)
 	grammar.emplace('F', "-F");
 	grammar.emplace('F', "n");
 
-
 	SLR1_parser parser;
 	try{
 		parser = SLR1_parser(grammar, print_parsing_table);
@@ -60,8 +70,26 @@ int main(int argc, char **argv)
 		std::cout << e.what() << std::endl;
 	}
 	
-	std::cout 	<< "Input string: " << input_string << std::endl 
-				<< "Result : "<< (parser.parse(input_string) ? "accepted" : "reject") << std::endl;
-	
+	if (input_file.empty()) {
+		std::cout 	<< "Input string: " << input_string << std::endl 
+					<< "Result : "<< (parser.parse(input_string, print_tree) ? "accepted" : "reject") << std::endl;
+	}
+	else {
+		std::ifstream in(input_file, std::ios::in);
+		if (in.is_open()) {
+			std::string str;
+			while (in >> str) {
+				std::cout << "Input string: " << str << std::endl
+							<< "Result : " << (parser.parse(str, print_tree) ? "accepted" : "reject") 
+							<< std::endl << "---" << std::endl;
+			}
+		}
+		else{ 
+			std::cout << "file wasn't open; exiting" << std::endl;
+			return 0;
+		}
+	}
+
 	return 0;
 }
+
