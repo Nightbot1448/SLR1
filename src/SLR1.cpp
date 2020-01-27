@@ -12,21 +12,24 @@ int main(int argc, char **argv)
 	std::string input_string("-n+(n*n--n/n)+n");
 	std::string input_file;
 
-	const char* short_options = "pt::if:";
-	int rez;
+	const char* short_options = "pti:f:";
+	int res=0;
 	int option_index;
 
 	const struct option long_options[] = {
-		{"input",required_argument,NULL,'i'},
 		{"file",required_argument,NULL,'f'},
+		{"input",required_argument,NULL,'i'},
 		{"tree",no_argument,NULL,'t'},
 		{"print_table",no_argument,NULL,'p'},
 		{NULL,0,NULL,0}
 	};
-	while ((rez=getopt_long(argc,argv,short_options,
-		long_options,&option_index))!=-1){
 
-		switch(rez){
+	while ((res=getopt_long(argc,argv,short_options,
+		long_options,&option_index))!=-1){
+		std::cout << static_cast<char>(res) << std::endl;
+		std::cout << "opterr: " << opterr << std::endl;
+		std::cout << "optopt: " << optopt << std::endl;
+		switch(res){
 			case 'p': {
 				print_parsing_table = true;
 				break;
@@ -36,15 +39,17 @@ int main(int argc, char **argv)
 				break;
 			}
 			case 'i': {
+				printf("optarg: '%s'\n", optarg);
 				input_string = optarg;
 				break;
 			}
 			case 'f': {
+				std::cout << optarg << std::endl;
 				input_file = optarg;
 				break;
 			}
 			case '?': default: {
-				printf("found unknown option\n");
+				std::cout << "unknown option" << std::endl;
 				break;
 			}
 		}
@@ -92,4 +97,3 @@ int main(int argc, char **argv)
 
 	return 0;
 }
-
