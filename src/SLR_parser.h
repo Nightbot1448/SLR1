@@ -4,6 +4,9 @@
 #include "Graph_of_states.h"
 #include "Parsing_table.h"
 
+#include <stack>
+
+
 class SLR1_parser {
 	FirstFollow_sets first_;
 	FirstFollow_sets follow_;
@@ -11,13 +14,15 @@ class SLR1_parser {
 	Graph_of_states graph;
 	Parsing_table table;
 
-	/*std::set<char> first(std::string form);
-	std::set<char> follow(char form);
-	std::set<char> firstFollow(char symb);*/
+	std::set<char> first(std::string form);
+	//std::set<char> follow(char form, FirstFollow_sets& previous_state);
+	std::set<char> firstFollow(char symb);
+	void insert_ff_sets(FirstFollow_sets &set_, char symb, std::set<char> s);
 
 	void init_first();
 	void init_follow();
 	void print_tree_(const TreeNode& tree) const;
+	void complete_tree_(std::stack<TreeNode>& tree);
 	
 public:
 	SLR1_parser(){}

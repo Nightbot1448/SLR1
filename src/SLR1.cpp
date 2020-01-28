@@ -3,19 +3,22 @@
 
 #include <iostream>
 #include <fstream>
+#ifdef __linux__
 #include <getopt.h>
+#endif
 
 int main(int argc, char **argv)
 {
 	bool print_parsing_table = false;
 	bool print_tree = false;
 	std::string input_string("-n+(n*n--n/n)+n");
+
 	std::string input_file;
 
 	const char* short_options = "pti:f:";
 	int res=0;
 	int option_index;
-
+#ifdef __linux__
 	const struct option long_options[] = {
 		{"file",required_argument,NULL,'f'},
 		{"input",required_argument,NULL,'i'},
@@ -54,7 +57,7 @@ int main(int argc, char **argv)
 			}
 		}
 	}
-	
+#endif
 	Grammar grammar;
 	grammar.emplace('S', "E");
 	grammar.emplace('E', "T");

@@ -1,7 +1,6 @@
 ﻿#include "SLR_parser.h"
 
 #include <iostream>
-#include <stack>
 
 SLR1_parser::SLR1_parser(const Grammar &g, bool print_table) : grammar(g), graph(Graph_of_states(grammar)) {
 	init_first();
@@ -28,59 +27,81 @@ void SLR1_parser::print_parsing_table() {
 	for (auto it_r : table.table_) {
 		std::cout << it_r.first << '\t';
 		for (auto it_y : it_r.second) {
-			std::cout << translate.at(it_y.second.type) << it_y.second.id << '\t';
+			if (it_y.second.type != TYPES::FAIL) {
+				std::cout << translate.at(it_y.second.type) << it_y.second.id << '\t';
+			}
+			else {
+				std::cout << "--\t";
+			}
 		}
 		std::cout << std::endl;
 	}
 }
 
-//std::set<char> SLR1_parser::first(std::string form) {
-//
-//	if (std::isupper(form.at(0)))
-//	{
-//		std::set<char> first_for_nt;
-//		auto range = grammar.equal_range(form.at(0));
-//		for (auto rule = range.first; rule != range.second; rule++) {
-//			if (rule->first != rule->second.at(0)) {
-//				std::set<char> part_of_first_for_nt = first(rule->second);
-//				first_for_nt.insert(part_of_first_for_nt.begin(), part_of_first_for_nt.end());
-//			}
-//		}
-//		if (first_.find(form.at(0)) == first_.end()) {
-//			first_.insert(std::pair<char, std::set<char>>(form.at(0), first_for_nt));
-//		}
-//		else {
-//			first_.at(form.at(0)).insert(first_for_nt.begin(), first_for_nt.end());
-//		}
-//		return first_for_nt;
-//	}
-//	else {
-//		std::set<char> res;
-//		res.emplace(form.at(0));
-//		return res;
-//	}
-//}
-//std::set<char> SLR1_parser::firstFollow(char symb) {
-//	return std::isupper(symb) ? first_.at(symb) : std::set<char>{symb};
-//}
-//std::set<char> SLR1_parser::follow(char nt) {
-//	return std::set<char>{};
-//}
+void SLR1_parser::insert_ff_sets(FirstFollow_sets &set_, char symb, std::set<char> s) {
+	auto it = set_.find(symb);
+	if (it != set_.end()) {
+		set_.at(symb).insert(s.begin(), s.end());
+	}
+	else {
+		set_.insert(std::pair<char, std::set<char>>(symb, s));
+	}
+}
+
+std::set<char> SLR1_parser::first(std::string form) {
+
+	if (std::isupper(form.at(0)))
+	{
+		std::set<char> first_for_nt;
+		auto range = grammar.equal_range(form.at(0));
+		for (auto rule = range.first; rule != range.second; rule++) {
+			if (rule->first != rule->second.at(0)) {
+				std::set<char> part_of_first_for_nt = first(rule->second);
+				first_for_nt.insert(part_of_first_for_nt.begin(), part_of_first_for_nt.end());
+			}
+		}
+		insert_ff_sets(first_, form.at(0), first_for_nt);
+		return first_for_nt;
+	}
+	else {
+		std::set<char> res;
+		res.emplace(form.at(0));
+		return res;
+	}
+}
 
 void SLR1_parser::init_first() {
-	//first_.insert(std::pair<char, std::set<char>>('S', first(grammar.find('S')->second)));
-	first_.emplace('E', std::set<char>{ '-', '(', 'n' });
-	first_.emplace('T', std::set<char>{ '-', '(', 'n' });
-	first_.emplace('F', std::set<char>{ '-', '(', 'n' });
+	for (auto rule_it = grammar.begin(); rule_it != grammar.end(); ++rule_it) {
+		insert_ff_sets(first_, rule_it->first, first(rule_it->second));
+	}
+}
+
+std::set<char> SLR1_parser::firstFollow(char symb) {
+	return std::isupper(symb) ? first_.at(symb) : std::set<char>{symb};
 }
 
 void SLR1_parser::init_follow() {
-	follow_.emplace('E', std::set<char>{ '+', '-',')', '$' });
-	follow_.emplace('T', std::set<char>{ '+', '-',')', '*', '/', '$' });
-	follow_.emplace('F', std::set<char>{ '+', '-',')', '*', '/', '$' });
+	FirstFollow_sets previous_state = follow_;
+	follow_.emplace('S', std::set<char>{'$'});
+	while (previous_state != follow_) {
+		previous_state = follow_;
+		for (auto rule_it = grammar.begin(); rule_it != grammar.end(); ++rule_it) {
+			for (auto symb_it = rule_it->second.begin(); symb_it != rule_it->second.end(); ++symb_it) {
+				if (std::isupper(*symb_it)) {
+					if (symb_it + 1 != rule_it->second.end()) {
+						insert_ff_sets(follow_, *symb_it, firstFollow(*(symb_it + 1)));
+					}
+					else {
+						auto it = follow_.find(rule_it->first);
+						if (it != follow_.end()) {
+							insert_ff_sets(follow_, *symb_it, it->second);
+						}
+					}
+				}
+			}
+		}
+	}
 }
-
-
 
 bool SLR1_parser::parse(std::string input, bool print_tree) {
 	std::stack<Stack_elem> st;
@@ -126,6 +147,7 @@ bool SLR1_parser::parse(std::string input, bool print_tree) {
 		}
 		else if (action.type == TYPES::ACCEPT) {
 			if (print_tree) {
+				complete_tree_(tree);
 				print_tree_(tree.top());
 				std::cout << std::endl;
 			}
@@ -150,4 +172,27 @@ void SLR1_parser::print_tree_(const TreeNode& node) const {
 		}
 	}
 	std::cout << "] ";
+}
+
+void SLR1_parser::complete_tree_(std::stack<TreeNode> &tree) {
+	if (tree.size() && tree.top().symb != 'S') {
+		std::stack<TreeNode> copy = tree;
+		std::string result_rule;
+		while (copy.size()) {
+			result_rule.push_back(copy.top().symb);
+			copy.pop();
+		}
+		std::reverse(result_rule.begin(), result_rule.end());
+		auto range = grammar.equal_range('S');
+		for (auto it = range.first; it != range.second; ++it) {
+			if (it->second == result_rule ) {
+				TreeNode parent('S');
+				while (tree.size()) {
+					parent.children.push_back(tree.top());
+					tree.pop();
+				}
+				tree.push(parent);
+			}
+		}
+	}
 }
