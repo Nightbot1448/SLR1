@@ -29,9 +29,6 @@ int main(int argc, char **argv)
 
 	while ((res=getopt_long(argc,argv,short_options,
 		long_options,&option_index))!=-1){
-		std::cout << static_cast<char>(res) << std::endl;
-		std::cout << "opterr: " << opterr << std::endl;
-		std::cout << "optopt: " << optopt << std::endl;
 		switch(res){
 			case 'p': {
 				print_parsing_table = true;
@@ -42,12 +39,10 @@ int main(int argc, char **argv)
 				break;
 			}
 			case 'i': {
-				printf("optarg: '%s'\n", optarg);
 				input_string = optarg;
 				break;
 			}
 			case 'f': {
-				std::cout << optarg << std::endl;
 				input_file = optarg;
 				break;
 			}

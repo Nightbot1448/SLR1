@@ -30,7 +30,7 @@ if (GTest_FOUND)
 
 	enable_testing()
 
-	add_executable(run_tests test/tests.cpp)
+	add_executable(run_tests test/main_tests.cpp test/arithmetic.cpp test/ab_grammar.cpp)
 	target_link_libraries(run_tests SLR gtest pthread)
 
 	add_test(run_tests run_tests)

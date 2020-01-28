@@ -1,10 +1,10 @@
 #include "gtest/gtest.h"
 #include "SLR_parser.h"
 
-class ParserTest : public ::testing::Test {
+class ArithmeticParserTest : public ::testing::Test {
 protected:
 
-    ParserTest() {
+    ArithmeticParserTest() {
         Grammar grammar;
         grammar.emplace('S', "E");
         grammar.emplace('E', "T");
@@ -22,61 +22,56 @@ protected:
     SLR1_parser parser;
 };
 
-TEST_F(ParserTest, SuccesNumber) {
+TEST_F(ArithmeticParserTest, SuccesNumber) {
     std::string in("n");
     // std::cout << "\tInput: " << in << std::endl;
     EXPECT_EQ(parser.parse(in), true);
 }
 
-TEST_F(ParserTest, SuccesNegativeNumber) {
+TEST_F(ArithmeticParserTest, SuccesNegativeNumber) {
     std::string in("-n");
     // std::cout << "\tInput: " << in << std::endl;
     EXPECT_EQ(parser.parse(in), true);
 }
 
-TEST_F(ParserTest, SuccesSumOfPositiveNumbers) {
+TEST_F(ArithmeticParserTest, SuccesSumOfPositiveNumbers) {
     std::string in("n+n");
     // std::cout << "\tInput: " << in << std::endl;
     EXPECT_EQ(parser.parse(in), true);
 }
 
-TEST_F(ParserTest, SuccesMultiplyWithNegNumberWithFewMinuses) {
+TEST_F(ArithmeticParserTest, SuccesMultiplyWithNegNumberWithFewMinuses) {
     std::string in("n*---n");
     // std::cout << "\tInput: " << in << std::endl;
     EXPECT_EQ(parser.parse(in), true);
 }
 
-TEST_F(ParserTest, SuccesAllInOne) {
+TEST_F(ArithmeticParserTest, SuccesAllInOne) {
     std::string in("n-n+(n*n--n/n)+n");
     // std::cout << "\tInput: " << in << std::endl;
     EXPECT_EQ(parser.parse(in), true);
 }
 
-TEST_F(ParserTest, FailureTwoOpInSequence) {
+TEST_F(ArithmeticParserTest, FailureTwoOpInSequence) {
     std::string in("n*/n");
     // std::cout << "\tInput: " << in << std::endl;
     EXPECT_EQ(parser.parse(in), false);
 }
 
-TEST_F(ParserTest, FailureWithoutCloseBracket) {
+TEST_F(ArithmeticParserTest, FailureWithoutCloseBracket) {
     std::string in("n*(n");
     // std::cout << "\tInput: " << in << std::endl;
     EXPECT_EQ(parser.parse(in), false);
 }
 
-TEST_F(ParserTest, FailureWithoutOpenBracket) {
+TEST_F(ArithmeticParserTest, FailureWithoutOpenBracket) {
     std::string in("n*-n)");
     // std::cout << "\tInput: " << in << std::endl;
     EXPECT_EQ(parser.parse(in), false);
 }
 
-TEST_F(ParserTest, FailureTwoNumInSequence) {
+TEST_F(ArithmeticParserTest, FailureTwoNumInSequence) {
     std::string in("n*-nn");
     // std::cout << "\tInput: " << in << std::endl;
     EXPECT_EQ(parser.parse(in), false);
-}
-
-int main (int argc, char *argv[]) {
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
 }
