@@ -22,7 +22,7 @@ int main(int argc, char **argv)
 	const struct option long_options[] = {
 		{"file",required_argument,NULL,'f'},
 		{"input",required_argument,NULL,'i'},
-		{"tree",no_argument,NULL,'t'},
+		{"print_tree",no_argument,NULL,'t'},
 		{"print_table",no_argument,NULL,'p'},
 		{NULL,0,NULL,0}
 	};
